@@ -1,5 +1,5 @@
 ---
-name: commitgi-generate
+name: commit-generate
 description: Generate one-sentence commit message in Traditional Chinese from git diff output. Use when user provides git diff and requests a commit message.
 ---
 
@@ -31,7 +31,7 @@ description: Generate one-sentence commit message in Traditional Chinese from gi
 
 ## Output Format
 ```
-TAG: 一句話描述變更內容（繁體中文）
+tag: 一句話描述變更內容（繁體中文）
 ```
 
 ## Rules
@@ -43,9 +43,12 @@ TAG: 一句話描述變更內容（繁體中文）
 
 ## Examples
 ```
-FEAT: 新增 Docker 環境自動偵測與資料庫路徑切換機制
-FIX: 修正使用者登入時 token 過期未正確處理的問題
-REFACTOR: 重構訂單模組並抽離共用驗證邏輯
-UPDATE: 調整 API timeout 為 30 秒並加入 context 傳遞
-CHORE: 升級 Go 版本至 1.22 並更新相依套件
+feat: 新增 Docker 環境自動偵測與資料庫路徑切換機制
+fix: 修正使用者登入時 token 過期未正確處理的問題
+refactor: 重構訂單模組並抽離共用驗證邏輯
+update: 調整 API timeout 為 30 秒並加入 context 傳遞
+chore: 升級 Go 版本至 1.22 並更新相依套件
+breaking: 移除舊版 API v1 endpoint，需更新所有 client
+security: 修補 SQL injection 漏洞並加入參數化查詢
+perf: 優化批次查詢減少 N+1 問題
 ```
