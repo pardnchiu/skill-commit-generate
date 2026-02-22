@@ -1,6 +1,6 @@
 ---
 name: commit-generate
-description: Generate one-sentence commit message in Traditional Chinese from git diff output. Use when user provides git diff and requests a commit message.
+description: Generate one-sentence commit message in Traditional Chinese from staged changes. Use when user wants a commit message generated from currently staged git files (git diff --cached).
 ---
 
 # Commit Message Generator
@@ -9,25 +9,32 @@ description: Generate one-sentence commit message in Traditional Chinese from gi
 
 ## Input
 
-使用者提供 `git diff` 輸出。
+執行 `git diff --cached` 取得目前已 stage 的變更。若無 staged 變更，提示使用者先執行 `git add`。
+
+## Steps
+
+1. 使用 Bash 工具執行 `git diff --cached` 取得 staged diff
+2. 若輸出為空，回應：「目前沒有 staged 的變更，請先執行 `git add <file>` 後再試。」並停止
+3. 依據 diff 內容，套用下方規則產生 commit message
+4. 輸出 commit message（純文字，不加額外說明）
 
 ## Classification Tags
 
 | Tag | 適用情境 |
 |-----|----------|
-| `FEAT` | 新功能、新 endpoint、新元件 |
-| `FIX` | Bug 修正、錯誤處理、nil check |
-| `UPDATE` | 修改既有行為、參數調整 |
-| `ADD` | 新增檔案/資源（非功能） |
-| `REMOVE` | 刪除程式碼或檔案 |
-| `REFACTOR` | 重構（行為不變） |
-| `PERF` | 效能優化 |
-| `STYLE` | 格式化、排版 |
-| `DOC` | 文件、註解 |
-| `TEST` | 測試相關 |
-| `CHORE` | CI/CD、工具、依賴管理 |
-| `SECURITY` | 安全性修補 |
-| `BREAKING` | 破壞性變更 |
+| `feat` | 新功能、新 endpoint、新元件 |
+| `fix` | Bug 修正、錯誤處理、nil check |
+| `update` | 修改既有行為、參數調整 |
+| `add` | 新增檔案/資源（非功能） |
+| `remove` | 刪除程式碼或檔案 |
+| `refactor` | 重構（行為不變） |
+| `perf` | 效能優化 |
+| `style` | 格式化、排版 |
+| `doc` | 文件、註解 |
+| `test` | 測試相關 |
+| `chore` | CI/CD、工具、依賴管理 |
+| `security` | 安全性修補 |
+| `breaking` | 破壞性變更 |
 
 ## Output Format
 ```
