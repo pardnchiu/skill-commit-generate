@@ -1,6 +1,6 @@
 ---
 name: commit-generate
-description: Generate one-sentence commit message in Traditional Chinese from staged changes. Use when user wants a commit message generated from currently staged git files (git diff --cached).
+description: Generate one-sentence commit message in Traditional Chinese from git changes. Uses staged diff (git diff --cached) if any files are staged, otherwise falls back to full diff (git diff).
 ---
 
 # Commit Message Generator
@@ -9,14 +9,16 @@ description: Generate one-sentence commit message in Traditional Chinese from st
 
 ## Input
 
-執行 `git diff --cached` 取得目前已 stage 的變更。若無 staged 變更，提示使用者先執行 `git add`。
+依據是否有 staged 檔案，自動選擇 diff 來源。
 
 ## Steps
 
-1. 使用 Bash 工具執行 `git diff --cached` 取得 staged diff
-2. 若輸出為空，回應：「目前沒有 staged 的變更，請先執行 `git add <file>` 後再試。」並停止
-3. 依據 diff 內容，套用下方規則產生 commit message
-4. 輸出 commit message（純文字，不加額外說明）
+1. 使用 Bash 工具執行 `git diff --cached --name-only` 檢查是否有 staged 檔案
+2. **若有 staged 檔案**：執行 `git diff --cached` 取得 staged diff
+3. **若無 staged 檔案**：執行 `git diff` 取得工作區 diff
+4. 若兩者輸出皆為空，回應：「目前沒有任何變更。」並停止
+5. 依據 diff 內容，套用下方規則產生 commit message
+6. 輸出 commit message（純文字，不加額外說明）
 
 ## Classification Tags
 
