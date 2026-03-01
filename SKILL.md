@@ -1,11 +1,11 @@
 ---
 name: commit-generate
-description: Generate one-sentence commit message in Traditional Chinese from git changes. Uses staged diff (git diff --cached) if any files are staged, otherwise falls back to full diff (git diff).
+description: Generate bilingual (English + Traditional Chinese) commit message from git changes.
 ---
 
 # Commit Message Generator
 
-從 git diff 產生單句繁體中文 commit message。
+從 git diff 產生雙語 commit message（英文 subject + 繁體中文 body）。
 
 ## Input
 
@@ -40,24 +40,41 @@ description: Generate one-sentence commit message in Traditional Chinese from gi
 
 ## Output Format
 ```
-tag: 一句話描述變更內容（繁體中文）
+tag: English one-line description
+tag: 繁體中文一句話描述
 ```
 
 ## Rules
 
 1. **單一 Tag** — 選擇最能代表本次變更核心意圖的 Tag
 2. **Tag 優先序** — `BREAKING` > `FEAT` > `FIX` > `SECURITY` > `UPDATE` > `REFACTOR` > `PERF` > others
-3. **簡潔** — 不超過 50 字，動詞開頭（新增、修正、重構、移除、優化）
-4. **合併相關變更** — 多個小改動歸納為單一描述
+3. **英文 subject** — imperative mood，不超過 72 字元（Add / Fix / Refactor / Remove / Update）
+4. **繁體中文 body** — 不超過 50 字，動詞開頭（新增、修正、重構、移除、優化）
+5. **合併相關變更** — 多個小改動歸納為單一描述
 
 ## Examples
 ```
+feat: Add Docker environment auto-detection and database path switching
 feat: 新增 Docker 環境自動偵測與資料庫路徑切換機制
+
+fix: Fix token expiration not handled correctly during user login
 fix: 修正使用者登入時 token 過期未正確處理的問題
+
+refactor: Extract shared validation logic from order module
 refactor: 重構訂單模組並抽離共用驗證邏輯
+
+update: Set API timeout to 30s and pass context through call chain
 update: 調整 API timeout 為 30 秒並加入 context 傳遞
+
+chore: Upgrade Go to 1.22 and update dependencies
 chore: 升級 Go 版本至 1.22 並更新相依套件
+
+breaking: Remove legacy API v1 endpoints, all clients must update
 breaking: 移除舊版 API v1 endpoint，需更新所有 client
+
+security: Fix SQL injection via parameterized queries
 security: 修補 SQL injection 漏洞並加入參數化查詢
+
+perf: Optimize batch queries to eliminate N+1 problem
 perf: 優化批次查詢減少 N+1 問題
 ```
