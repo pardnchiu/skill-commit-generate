@@ -9,16 +9,66 @@ description: Generate bilingual (English + Traditional Chinese) commit message f
 
 ## Input
 
-依據是否有 staged 檔案，自動選擇 diff 來源。
+僅處理 staged 變更。若無 staged 檔案，直接報錯並停止，不 fallback 到工作區 diff。
 
 ## Steps
 
-1. 使用 Bash 工具執行 `git diff --cached --name-only` 檢查是否有 staged 檔案
-2. **若有 staged 檔案**：執行 `git diff --cached` 取得 staged diff
-3. **若無 staged 檔案**：執行 `git diff` 取得工作區 diff
-4. 若兩者輸出皆為空，回應：「目前沒有任何變更。」並停止
-5. 依據 diff 內容，套用下方規則產生 commit message
-6. 輸出 commit message（純文字，不加額外說明）
+1. 使用 Bash 工具執行 `git diff --cached` 取得 staged diff
+2. 若輸出為空，回應：「目前沒有 staged 變更，請先執行 `git add` 選擇要提交的檔案。」並停止
+3. 判斷是否為跨主題變更（見 **Multi-Topic Detection**）
+4. 依 **Tag Upgrade Signals** 由上而下掃描訊號，命中即強制升級 Tag，未命中才可依意圖選 lower tag
+5. 套用下方規則產生 commit message
+6. 若命中跨主題：先輸出拆分建議，再輸出單一概括 message；否則直接輸出 message
+7. 輸出為純文字，不加額外說明
+
+## Multi-Topic Detection
+
+**偵測條件（任一命中即視為跨主題）：**
+
+- diff 同時觸及 2 個以上 primary tag 類別（`feat` / `fix` / `refactor` / `breaking` / `security`）
+- 變更檔案橫跨 2 個以上語意無關的模組（以一級目錄或套件邊界判斷）
+- 單次 commit 包含 3 個以上彼此無關的主題
+
+**命中時輸出格式：**
+
+```
+⚠️ 偵測到跨主題變更，建議拆分為多次 commit：
+- {主題 A 簡述}：{檔案清單}
+- {主題 B 簡述}：{檔案清單}
+
+若仍要合併，以下為概括描述：
+tag: English description
+tag: 繁體中文描述
+```
+
+**理由：** 單次 commit 應呈現單一意圖。混合主題使 `git log` 難以追溯、`git revert` 無法精準還原、code review 無法聚焦。格式化、純註解補充、依賴升級等輔助性改動可併入主 commit，不視為跨主題。
+
+## Tag Upgrade Signals
+
+**強制升級規則：** 依下列順序由上而下掃描訊號，命中即強制採用對應 Tag；即使其他部分看起來像 feat / update / chore，也不得降級。
+
+### Breaking Signals（命中 → `breaking`）
+
+- 刪除任何 exported / public 符號（function、class、method、type、constant、enum value）
+- 已存在函式 / 方法簽章變更：參數型別、順序、新增必填參數、回傳型別改變
+- HTTP API 變更：endpoint 刪除、URL 路徑改、response schema 欄位移除或型別變、status code 變更
+- 環境變數或設定檔：刪除既有鍵、新增必填鍵、既有鍵的型別 / 格式變更
+- 資料庫 migration 非向後相容：`DROP COLUMN`、必填欄位加在有資料的表、型別縮窄
+- CLI / 指令參數：旗標刪除、新增必填位置參數、既有旗標語意變更
+- Import path / package / module 結構變更導致既有引用失效
+
+### Security Signals（命中 → `security`，除非同時命中 Breaking）
+
+- 修補注入類漏洞：SQL / XSS / Command / LDAP / Template injection
+- 驗證 / 授權邏輯修補：missing auth check、privilege escalation、JWT 驗證缺失
+- 敏感資料洩漏：log / response / error message 移除密鑰、token、PII
+- 硬編碼密鑰 / token / 預設密碼移除
+- CSRF / CORS / CSP / HSTS 相關修補
+- 相依套件 CVE 修補（從 `chore: upgrade` 升級為 `security`）
+
+### 未命中時
+
+依 Tag 優先序 `BREAKING` > `FEAT` > `FIX` > `SECURITY` > `UPDATE` > `REFACTOR` > `PERF` > others 中擇一，匹配 diff 的核心意圖。
 
 ## Classification Tags
 
@@ -51,6 +101,7 @@ tag: 繁體中文一句話描述
 3. **英文 subject** — imperative mood，不超過 72 字元（Add / Fix / Refactor / Remove / Update）
 4. **繁體中文 body** — 不超過 50 字，動詞開頭（新增、修正、重構、移除、優化）
 5. **合併相關變更** — 多個小改動歸納為單一描述
+6. **單一主題優先** — 一次 commit 表達一個意圖；偵測到跨主題時先警示使用者拆分，再給概括 message
 
 ## Examples
 ```
