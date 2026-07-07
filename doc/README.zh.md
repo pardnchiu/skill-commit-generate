@@ -1,5 +1,6 @@
 > [!NOTE]
-> 此 README 由 [SKILL](https://github.com/pardnchiu/skill-readme-generate) 生成，英文版請參閱 [這裡](../README.md)。
+> 此 README 由 [SKILL](https://github.com/agenvoy/skill-readme-generate) 生成，英文版請參閱 [這裡](../README.md)。<br>
+> 此 skill 的實作內容全由 agent 生成，開發者僅針對 input / output 進行調整。
 
 ***
 
@@ -8,8 +9,7 @@
 </p>
 
 <p align="center">
-<a href="LICENSE"><img src="https://img.shields.io/github/v/tag/pardnchiu/skill-commit-generate?include_prereleases&style=for-the-badge" alt="Version"></a>
-<a href="https://github.com/pardnchiu/skill-commit-generate/releases"><img src="https://img.shields.io/github/license/pardnchiu/skill-commit-generate?include_prereleases&style=for-the-badge" alt="License"></a>
+<a href="LICENSE"><img src="https://img.shields.io/github/license/agenvoy/skill-commit-generate?include_prereleases&style=for-the-badge" alt="License"></a>
 </p>
 
 ***
@@ -19,7 +19,6 @@
 ## 目錄
 
 - [功能特點](#功能特點)
-- [技術堆疊](#技術堆疊)
 - [架構](#架構)
 - [授權](#授權)
 
@@ -32,12 +31,6 @@
 - **Tag 強制升級訊號** — 掃描 Breaking / Security 訊號，命中即升級 Tag，禁止降級為 `feat` 或 `update`。
 - **跨主題偵測** — 同次 diff 觸及 2+ primary tag 或 3+ 無關主題時先警示拆分，再輸出概括訊息。
 - **13 種分類 Tag** — 依 `BREAKING` > `FEAT` > `FIX` > `SECURITY` > `UPDATE` > `REFACTOR` > `PERF` 優先序統一決策。
-
-## 技術堆疊
-
-<a href="https://skillicons.dev">
-  <img src="https://skillicons.dev/icons?i=git,github,bash,md&theme=light" />
-</a>
 
 ## 架構
 
